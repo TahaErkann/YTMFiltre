@@ -55,3 +55,4 @@ C:\Users\owner\Desktop\YTM\YTM.API\obj\Debug\net8.0\refint\YTM.API.dll
 C:\Users\owner\Desktop\YTM\YTM.API\obj\Debug\net8.0\YTM.API.pdb
 C:\Users\owner\Desktop\YTM\YTM.API\obj\Debug\net8.0\YTM.API.genruntimeconfig.cache
 C:\Users\owner\Desktop\YTM\YTM.API\obj\Debug\net8.0\ref\YTM.API.dll
+C:\Users\owner\Desktop\YTM\YTM.API\obj\Debug\net8.0\YTM.API.sourcelink.json

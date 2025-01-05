@@ -1,29 +1,48 @@
-let cartModal;
+let cartModal = null;
+let productDetailModal = null;
 let selectedProduct = null;
-let productDetailModal;
 let availableBrands = new Set();
 
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
     if (!checkAuth()) return;
-    await loadProducts();
-    setupFilters();
+
+    // Modal elementlerini seç
+    const cartModalElement = document.getElementById('cartModal');
+    const productDetailModalElement = document.getElementById('productDetailModal');
+
+    // Modal'ları başlat
+    if (cartModalElement) {
+        cartModal = new bootstrap.Modal(cartModalElement);
+    }
+
+    if (productDetailModalElement) {
+        productDetailModal = new bootstrap.Modal(productDetailModalElement);
+    }
+
+    // İlk yüklemede ürünleri getir
+    loadProducts();
+    loadCart();
 });
 
 async function loadProducts() {
     try {
+        // Tüm aktif ürünleri getir
         const response = await fetch('/api/products', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 
-        if (!response.ok) throw new Error('Ürünler yüklenemedi');
-        
+        if (!response.ok) {
+            throw new Error('Ürünler yüklenemedi');
+        }
+
         const products = await response.json();
         displayProducts(products);
-        updateBrandFilter(products);
+        updateBrandFilter(products); // Marka filtresini güncelle
     } catch (error) {
-        showToast('Ürünler yüklenirken hata oluştu', 'error');
+        console.error('Error loading products:', error);
+        showToast('Ürünler yüklenirken bir hata oluştu', 'error');
     }
 }
 
@@ -38,15 +57,16 @@ function displayProducts(products) {
     container.innerHTML = products.map(product => `
         <div class="col-md-4 mb-4">
             <div class="card h-100">
-                <img src="${product.imageUrl}" class="card-img-top" alt="${product.name}">
+                <img src="${product.imageUrl}" class="card-img-top" alt="${product.name}" onclick="showProductDetail('${product.id}')">
                 <div class="card-body">
                     <h5 class="card-title">${product.name}</h5>
                     <p class="card-text">
                         <strong>Marka:</strong> ${product.brand}<br>
-                        <strong>Fiyat:</strong> ${product.price} TL
+                        <strong>Fiyat:</strong> ${product.price} TL<br>
+                        <strong>Numaralar:</strong> ${product.sizes.map(s => s.size).join(', ')}
                     </p>
                     <button class="btn btn-primary" onclick="showProductDetail('${product.id}')">
-                        Detaylar
+                        <i class="bi bi-eye"></i> Detaylar
                     </button>
                 </div>
             </div>
@@ -66,14 +86,23 @@ function updateBrandFilter(products) {
 
 async function filterProducts() {
     const brand = document.getElementById('brandFilter').value;
+    const size = document.getElementById('sizeFilter').value;
     const minPrice = document.getElementById('minPrice').value;
     const maxPrice = document.getElementById('maxPrice').value;
 
     try {
+        // Eğer hiçbir filtre seçilmediyse tüm ürünleri göster
+        if (!brand && !size && !minPrice && !maxPrice) {
+            await loadProducts();
+            return;
+        }
+
+        // Filtre varsa filtreleme endpoint'ini kullan
         let url = '/api/products/filter?';
         const params = new URLSearchParams();
         
         if (brand) params.append('brand', brand);
+        if (size) params.append('size', size);
         if (minPrice) params.append('minPrice', minPrice);
         if (maxPrice) params.append('maxPrice', maxPrice);
 
@@ -83,12 +112,15 @@ async function filterProducts() {
             }
         });
 
-        if (!response.ok) throw new Error('Filtreleme başarısız');
+        if (!response.ok) {
+            throw new Error('Filtreleme başarısız');
+        }
 
         const products = await response.json();
         displayProducts(products);
     } catch (error) {
-        showToast('Filtreleme sırasında hata oluştu', 'error');
+        console.error('Filtreleme hatası:', error);
+        showToast('Filtreleme sırasında bir hata oluştu', 'error');
     }
 }
 
@@ -172,43 +204,34 @@ async function addToCart() {
         const sizeSelect = document.getElementById('sizeSelect');
         const quantityInput = document.getElementById('quantityInput');
         
-        if (!sizeSelect.value) {
-            showToast('Lütfen bir numara seçin', 'warning');
-            return;
-        }
-        
-        const quantity = parseInt(quantityInput.value);
-        if (quantity < 1) {
-            showToast('Geçerli bir adet giriniz', 'warning');
-            return;
-        }
-        
-        // Seçilen numaranın stok kontrolü
-        const selectedSize = selectedProduct.sizes.find(s => s.size === parseInt(sizeSelect.value));
-        if (!selectedSize) {
-            showToast('Geçersiz numara seçimi', 'warning');
-            return;
-        }
-        
-        if (quantity > selectedSize.stock) {
-            showToast('Yetersiz stok', 'warning');
+        if (!selectedProduct || !sizeSelect.value || !quantityInput.value) {
+            showToast('Lütfen numara ve adet seçin', 'warning');
             return;
         }
 
-        console.log('Adding to cart:', {
-            productId: selectedProduct.id,
-            size: parseInt(sizeSelect.value),
-            quantity: quantity
+        const response = await fetch('/api/cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                productId: selectedProduct.id,
+                size: parseInt(sizeSelect.value),
+                quantity: parseInt(quantityInput.value)
+            })
         });
-        
-        await addItemToCart(selectedProduct.id, parseInt(sizeSelect.value), quantity);
-        
+
+        if (!response.ok) {
+            throw new Error('Sepete eklenemedi');
+        }
+
+        await loadCart();
         productDetailModal.hide();
         showToast('Ürün sepete eklendi', 'success');
-        
     } catch (error) {
         console.error('Error:', error);
-        showToast(error.message, 'danger');
+        showToast('Ürün sepete eklenirken bir hata oluştu', 'error');
     }
 }
 
@@ -552,4 +575,61 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+async function showProductDetail(productId) {
+    try {
+        // Modal'ı kontrol et ve gerekirse yeniden başlat
+        if (!productDetailModal) {
+            const modalElement = document.getElementById('productDetailModal');
+            if (modalElement) {
+                productDetailModal = new bootstrap.Modal(modalElement);
+            } else {
+                throw new Error('Modal elementi bulunamadı');
+            }
+        }
+
+        const response = await fetch(`/api/products/${productId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Ürün detayları alınamadı');
+        }
+
+        selectedProduct = await response.json();
+
+        // Modal içeriğini güncelle
+        const modalImg = document.getElementById('modalProductImage');
+        const modalName = document.getElementById('modalProductName');
+        const modalDesc = document.getElementById('modalProductDescription');
+        const modalPrice = document.getElementById('modalProductPrice');
+        const sizeSelect = document.getElementById('sizeSelect');
+
+        if (modalImg) modalImg.src = selectedProduct.imageUrl;
+        if (modalName) modalName.textContent = selectedProduct.name;
+        if (modalDesc) modalDesc.textContent = selectedProduct.description;
+        if (modalPrice) modalPrice.textContent = `${selectedProduct.price} TL`;
+
+        // Numara seçeneklerini güncelle
+        if (sizeSelect) {
+            sizeSelect.innerHTML = selectedProduct.sizes
+                .filter(s => s.stock > 0)
+                .map(s => `<option value="${s.size}">Numara: ${s.size} - Stok: ${s.stock}</option>`)
+                .join('');
+        }
+
+        // Quantity input'u sıfırla
+        const quantityInput = document.getElementById('quantityInput');
+        if (quantityInput) quantityInput.value = 1;
+
+        // Modalı göster
+        productDetailModal.show();
+
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Ürün detayları yüklenirken bir hata oluştu', 'error');
+    }
 } 

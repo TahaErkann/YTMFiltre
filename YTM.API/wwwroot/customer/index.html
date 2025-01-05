@@ -207,20 +207,34 @@
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <select class="form-select" id="brandFilter">
                                     <option value="">Tüm Markalar</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <input type="number" class="form-control" id="minPrice" placeholder="Min. Fiyat">
-                            </div>
-                            <div class="col-md-3">
-                                <input type="number" class="form-control" id="maxPrice" placeholder="Max. Fiyat">
+                            <div class="col-md-2">
+                                <select class="form-select" id="sizeFilter">
+                                    <option value="">Tüm Numaralar</option>
+                                    <option value="36">36</option>
+                                    <option value="37">37</option>
+                                    <option value="38">38</option>
+                                    <option value="39">39</option>
+                                    <option value="40">40</option>
+                                    <option value="41">41</option>
+                                    <option value="42">42</option>
+                                    <option value="43">43</option>
+                                    <option value="44">44</option>
+                                </select>
                             </div>
                             <div class="col-md-2">
+                                <input type="number" class="form-control" id="minPrice" placeholder="Min. Fiyat">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" id="maxPrice" placeholder="Max. Fiyat">
+                            </div>
+                            <div class="col-md-3">
                                 <button class="btn btn-primary w-100" onclick="filterProducts()">
-                                    Filtrele
+                                    <i class="bi bi-funnel"></i> Filtrele
                                 </button>
                             </div>
                         </div>
@@ -291,38 +305,44 @@
     </div>
 
     <!-- Ürün Detay Modal -->
-    <div class="modal fade" id="productDetailModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Numara Seçimi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="productDetailModalLabel">Ürün Detayı</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <img id="modalProductImage" src="" alt="" class="img-fluid mb-3">
-                        <h5 id="modalProductName" class="mb-2"></h5>
-                        <p id="modalProductDescription" class="text-muted small mb-2"></p>
-                        <h4 id="modalProductPrice" class="text-primary"></h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img id="modalProductImage" src="" alt="Ürün Görseli" class="img-fluid rounded mb-3">
+                        </div>
+                        <div class="col-md-6">
+                            <h4 id="modalProductName" class="mb-3"></h4>
+                            <p id="modalProductDescription" class="text-muted mb-3"></p>
+                            <h5 id="modalProductPrice" class="text-primary mb-4"></h5>
+                            
+                            <form id="addToCartForm">
+                                <div class="mb-3">
+                                    <label for="sizeSelect" class="form-label">Numara Seçin</label>
+                                    <select class="form-select" id="sizeSelect" required>
+                                        <!-- Numaralar dinamik olarak doldurulacak -->
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="quantityInput" class="form-label">Adet</label>
+                                    <input type="number" class="form-control" id="quantityInput" 
+                                           min="1" value="1" required>
+                                    <div class="form-text">Seçilen numaradaki stok adedine göre değişiklik gösterir</div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <form id="addToCartForm" class="mt-4">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Numara Seçin</label>
-                            <select class="form-select form-select-lg" id="sizeSelect" required>
-                                <option value="">Numara Seçin</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Adet</label>
-                            <input type="number" class="form-control form-control-lg" id="quantityInput" 
-                                   value="1" min="1" required>
-                            <div class="form-text">Seçilen numaradaki stok adedine göre değişiklik gösterir</div>
-                        </div>
-                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                    <button type="button" class="btn btn-primary btn-lg" onclick="addToCart()">
+                    <button type="button" class="btn btn-primary" onclick="addToCart()">
                         <i class="bi bi-cart-plus"></i> Sepete Ekle
                     </button>
                 </div>

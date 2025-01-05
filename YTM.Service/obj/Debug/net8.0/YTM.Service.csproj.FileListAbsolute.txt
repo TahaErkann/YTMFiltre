@@ -13,3 +13,4 @@ C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Service.dll
 C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\refint\YTM.Service.dll
 C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Service.pdb
 C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\ref\YTM.Service.dll
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Service.sourcelink.json

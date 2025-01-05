@@ -146,12 +146,16 @@ namespace YTM.API.Controllers
         }
 
         [HttpGet("filter")]
-        public async Task<IActionResult> FilterProducts([FromQuery] string brand = "", [FromQuery] decimal? minPrice = null, [FromQuery] decimal? maxPrice = null)
+        public async Task<IActionResult> FilterProducts(
+            [FromQuery] string? brand = null, 
+            [FromQuery] int? size = null,
+            [FromQuery] decimal? minPrice = null, 
+            [FromQuery] decimal? maxPrice = null)
         {
             try
             {
                 var allProducts = await _productService.GetAllProductsAsync();
-                var iterator = new FilteredProductIterator(allProducts, brand, minPrice, maxPrice);
+                var iterator = new FilteredProductIterator(allProducts, brand, size, minPrice, maxPrice);
                 
                 var filteredProducts = new List<Product>();
                 while (iterator.HasNext())

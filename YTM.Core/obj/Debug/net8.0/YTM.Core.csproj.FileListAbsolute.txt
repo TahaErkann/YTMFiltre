@@ -10,3 +10,4 @@ C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\YTM.Core.dll
 C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\refint\YTM.Core.dll
 C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\YTM.Core.pdb
 C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\ref\YTM.Core.dll
+C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\YTM.Core.sourcelink.json
