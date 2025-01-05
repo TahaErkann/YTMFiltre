@@ -8,6 +8,7 @@ using YTM.Data.Repositories;
 using YTM.Service.Services;
 using MongoDB.Driver;
 using System.Security.Claims;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<DatabaseSettings>(
     builder.Configuration.GetSection(nameof(DatabaseSettings)));
 
-builder.Services.AddSingleton<IMongoClient>(sp => 
-    new MongoClient(builder.Configuration.GetSection("DatabaseSettings:ConnectionString").Value));
+builder.Services.AddSingleton<IMongoDatabase>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
+    var client = new MongoClient(settings.ConnectionString);
+    return client.GetDatabase(settings.DatabaseName);
+});
 
 // CORS politikası
 builder.Services.AddCors(options =>

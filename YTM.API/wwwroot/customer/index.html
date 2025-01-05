@@ -250,33 +250,36 @@
     </div>
 
     <!-- Sepet Modal -->
-    <div class="modal fade" id="cartModal" tabindex="-1">
-        <div class="modal-dialog">
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Sepetim</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="cartModalLabel">Sepetim</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Sepet İçeriği -->
                     <div id="cartItems">
                         <!-- Sepet öğeleri buraya dinamik olarak eklenecek -->
                     </div>
+                    
+                    <!-- Boş Sepet Mesajı -->
                     <div id="emptyCart" class="text-center p-4" style="display: none;">
                         <i class="bi bi-cart3 fs-1"></i>
                         <p class="mt-3">Sepetiniz boş</p>
                     </div>
                     
-                    <!-- Sipariş formu -->
-                    <div id="orderForm" class="mt-3" style="display: none;">
+                    <!-- Sipariş Formu -->
+                    <div id="orderForm" class="mt-4" style="display: none;">
                         <hr>
-                        <h6>Sipariş Bilgileri</h6>
+                        <h6 class="mb-3">Sipariş Bilgileri</h6>
                         <div class="mb-3">
                             <label for="shippingAddress" class="form-label">Teslimat Adresi</label>
                             <textarea class="form-control" id="shippingAddress" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="paymentMethod" class="form-label">Ödeme Yöntemi</label>
-                            <select class="form-control" id="paymentMethod" required>
+                            <select class="form-select" id="paymentMethod" required>
                                 <option value="">Seçiniz</option>
                                 <option value="CreditCard">Kredi Kartı</option>
                                 <option value="BankTransfer">Havale/EFT</option>
@@ -288,15 +291,17 @@
                 <div class="modal-footer justify-content-between">
                     <div>
                         <strong>Toplam: </strong>
-                        <span id="cartTotal">0.00 ₺</span>
+                        <span id="cartTotal">0.00 TL</span>
                     </div>
                     <div>
-                        <button type="button" class="btn btn-secondary" onclick="clearCart()">Sepeti Temizle</button>
+                        <button type="button" class="btn btn-outline-danger" onclick="clearCart()">
+                            <i class="bi bi-trash"></i> Sepeti Temizle
+                        </button>
                         <button type="button" class="btn btn-primary" id="checkoutButton" onclick="showOrderForm()">
-                            Sipariş Ver
+                            <i class="bi bi-bag-check"></i> Sipariş Ver
                         </button>
                         <button type="button" class="btn btn-success" id="confirmOrderButton" style="display: none;" onclick="checkout()">
-                            Siparişi Onayla
+                            <i class="bi bi-check-circle"></i> Siparişi Onayla
                         </button>
                     </div>
                 </div>

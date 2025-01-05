@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using YTM.Core.Services;
 using System.ComponentModel.DataAnnotations;
+using YTM.Core.Entities;
+using YTM.Core.Models;
 
 namespace YTM.API.Controllers
 {
@@ -100,18 +102,43 @@ namespace YTM.API.Controllers
         }
 
         [HttpPut("items/{productId}")]
-        public async Task<IActionResult> UpdateQuantity(string productId, [FromBody] UpdateQuantityRequest request)
+        public async Task<IActionResult> UpdateCartItem(string productId, [FromBody] UpdateCartItemRequest request)
         {
             try
             {
-                var userId = GetUserId();
-                await _cartService.UpdateQuantityAsync(userId, productId, request.Quantity);
-                return Ok(new { message = "Ürün miktarı güncellendi." });
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+
+                // Ürünü ve stok durumunu kontrol et
+                var product = await _productService.GetProductByIdAsync(productId);
+                if (product == null)
+                {
+                    return NotFound("Ürün bulunamadı");
+                }
+
+                // İstenen numaradaki stok durumunu kontrol et
+                var sizeInfo = product.Sizes.FirstOrDefault(s => s.Size == request.Size);
+                if (sizeInfo == null || sizeInfo.Stock < request.Quantity)
+                {
+                    return BadRequest("Yetersiz stok");
+                }
+
+                // Sepeti güncelle
+                var result = await _cartService.UpdateCartItemAsync(userId, productId, request.Size, request.Quantity);
+                if (!result)
+                {
+                    return BadRequest("Sepet güncellenemedi");
+                }
+
+                return Ok();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error updating quantity: {ex.Message}");
-                return StatusCode(500, new { message = "Ürün miktarı güncellenirken bir hata oluştu." });
+                return StatusCode(500, "Ürün miktarı güncellenirken bir hata oluştu");
             }
         }
 
@@ -136,14 +163,22 @@ namespace YTM.API.Controllers
         {
             try
             {
-                var userId = GetUserId();
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized();
+                }
+
                 await _cartService.ClearCartAsync(userId);
-                return Ok(new { message = "Sepet temizlendi." });
+                
+                // Boş sepeti döndür
+                var emptyCart = new Cart { UserId = userId, Items = new List<CartItem>() };
+                return Ok(emptyCart);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error clearing cart: {ex.Message}");
-                return StatusCode(500, new { message = "Sepet temizlenirken bir hata oluştu." });
+                return StatusCode(500, new { message = "Sepet temizlenirken bir hata oluştu" });
             }
         }
     }

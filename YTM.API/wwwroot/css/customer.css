@@ -407,4 +407,50 @@ body {
 
 .btn-primary:hover {
     background-color: #2980b9;
+}
+
+/* Sepet Modal Stilleri */
+#cartModal .modal-dialog {
+    max-width: 800px;
+}
+
+.cart-item {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item-image {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#cartTotal {
+    font-size: 1.2rem;
+    color: #2c3e50;
+}
+
+#orderForm {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+}
+
+#orderForm textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.modal-footer .btn {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: white;
 } 

@@ -21,9 +21,9 @@ namespace YTM.Service.Services
             _logger = logger;
         }
 
-        public async Task<Cart?> GetCartAsync(string userId)
+        public async Task<Cart> GetCartAsync(string userId)
         {
-            return await _cartRepository.GetCartByUserIdAsync(userId);
+            return await _cartRepository.GetCartAsync(userId);
         }
 
         public async Task AddToCartAsync(string userId, string productId, int size, int quantity)
@@ -47,7 +47,31 @@ namespace YTM.Service.Services
                     throw new Exception($"Seçilen numara için yetersiz stok. Mevcut stok: {selectedSize.Stock}");
                 }
 
-                await _cartRepository.AddToCartAsync(userId, productId, size, quantity);
+                var cart = await _cartRepository.GetCartAsync(userId) ?? new Cart 
+                { 
+                    UserId = userId,
+                    Items = new List<CartItem>()
+                };
+
+                var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == productId && i.Size == size);
+                if (existingItem != null)
+                {
+                    existingItem.Quantity += quantity;
+                }
+                else
+                {
+                    cart.Items.Add(new CartItem
+                    {
+                        ProductId = productId,
+                        ProductName = product.Name,
+                        ImageUrl = product.ImageUrl,
+                        Size = size,
+                        Quantity = quantity,
+                        Price = product.Price
+                    });
+                }
+
+                await _cartRepository.UpdateCartAsync(cart);
             }
             catch (Exception ex)
             {
@@ -58,36 +82,67 @@ namespace YTM.Service.Services
 
         public async Task RemoveFromCartAsync(string userId, string productId)
         {
-            await _cartRepository.RemoveItemFromCartAsync(userId, productId);
-        }
-
-        public async Task UpdateQuantityAsync(string userId, string productId, int quantity)
-        {
-            try
+            var cart = await _cartRepository.GetCartAsync(userId);
+            if (cart != null)
             {
-                var product = await _productService.GetProductByIdAsync(productId);
-                if (product == null)
-                {
-                    throw new Exception("Ürün bulunamadı");
-                }
-
-                if (product.Stock < quantity)
-                {
-                    throw new Exception("Yetersiz stok");
-                }
-
-                await _cartRepository.UpdateItemQuantityAsync(userId, productId, quantity);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error updating quantity: {ex.Message}");
-                throw;
+                cart.Items.RemoveAll(i => i.ProductId == productId);
+                await _cartRepository.UpdateCartAsync(cart);
             }
         }
 
         public async Task ClearCartAsync(string userId)
         {
-            await _cartRepository.ClearCartAsync(userId);
+            try
+            {
+                var cart = await _cartRepository.GetCartAsync(userId);
+                if (cart != null)
+                {
+                    cart.Items.Clear();
+                    await _cartRepository.UpdateCartAsync(cart);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error clearing cart: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateCartItemAsync(string userId, string productId, int size, int quantity)
+        {
+            try
+            {
+                var cart = await _cartRepository.GetCartAsync(userId);
+                if (cart == null)
+                {
+                    return false;
+                }
+
+                var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == productId && i.Size == size);
+                if (cartItem == null)
+                {
+                    return false;
+                }
+
+                // Stok kontrolü
+                var product = await _productService.GetProductByIdAsync(productId);
+                var sizeInfo = product?.Sizes.FirstOrDefault(s => s.Size == size);
+                if (sizeInfo == null || sizeInfo.Stock < quantity)
+                {
+                    throw new InvalidOperationException("Yetersiz stok");
+                }
+
+                // Miktarı güncelle
+                cartItem.Quantity = quantity;
+
+                // Sepeti güncelle
+                await _cartRepository.UpdateCartAsync(cart);
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 } 

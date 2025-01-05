@@ -133,21 +133,21 @@ function resetFilters() {
 
 async function loadCart() {
     try {
-        const token = localStorage.getItem('token');
         const response = await fetch('/api/cart', {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error('Sepet yüklenemedi');
         }
 
         const cart = await response.json();
         updateCartDisplay(cart);
     } catch (error) {
         console.error('Error loading cart:', error);
+        showToast('Sepet yüklenirken bir hata oluştu', 'error');
     }
 }
 
@@ -155,48 +155,68 @@ function updateCartDisplay(cart) {
     const cartItems = document.getElementById('cartItems');
     const emptyCart = document.getElementById('emptyCart');
     const cartTotal = document.getElementById('cartTotal');
+    const checkoutButton = document.getElementById('checkoutButton');
     const cartCount = document.getElementById('cartCount');
 
-    if (!cart || cart.items.length === 0) {
-        cartItems.innerHTML = '';
-        emptyCart.style.display = 'block';
-        cartTotal.textContent = '0.00 ₺';
-        cartCount.textContent = '0';
+    // Sepet boşsa
+    if (!cart || !cart.items || cart.items.length === 0) {
+        if (cartItems) cartItems.innerHTML = '';
+        if (emptyCart) emptyCart.style.display = 'block';
+        if (checkoutButton) checkoutButton.style.display = 'none';
+        if (cartTotal) cartTotal.textContent = '0.00 TL';
+        if (cartCount) cartCount.textContent = '0';
         return;
     }
 
-    emptyCart.style.display = 'none';
-    cartCount.textContent = cart.items.length.toString();
-    cartTotal.textContent = `${cart.totalAmount.toFixed(2)} ₺`;
+    // Sepet doluysa
+    if (emptyCart) emptyCart.style.display = 'none';
+    if (checkoutButton) checkoutButton.style.display = 'block';
 
-    cartItems.innerHTML = cart.items.map(item => `
-        <div class="d-flex align-items-center mb-3 border-bottom pb-3">
-            <img src="${item.imageUrl || '/images/no-image.png'}" 
-                 alt="${item.productName}"
-                 style="width: 64px; height: 64px; object-fit: cover;"
-                 class="me-3">
-            <div class="flex-grow-1">
-                <h6 class="mb-0">${item.productName}</h6>
-                <small class="text-muted">${item.price} ₺</small>
+    // Toplam fiyat ve ürün sayısı hesaplama
+    let totalPrice = 0;
+    let totalItems = 0;
+
+    cart.items.forEach(item => {
+        totalPrice += item.price * item.quantity;
+        totalItems += item.quantity;
+    });
+
+    // Sepet içeriğini güncelle
+    if (cartItems) {
+        cartItems.innerHTML = cart.items.map(item => `
+            <div class="cart-item mb-3">
+                <div class="d-flex align-items-center">
+                    <img src="${item.imageUrl}" alt="${item.productName}" class="cart-item-image me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">${item.productName}</h6>
+                        <p class="mb-0 text-muted">
+                            Numara: ${item.size} | Adet: ${item.quantity} | 
+                            Fiyat: ${item.price} TL
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-sm btn-outline-secondary me-2" 
+                                onclick="event.stopPropagation(); updateQuantity('${item.productId}', ${item.quantity - 1}, ${item.size})">
+                            <i class="bi bi-dash"></i>
+                        </button>
+                        <span class="mx-2">${item.quantity}</span>
+                        <button class="btn btn-sm btn-outline-secondary ms-2" 
+                                onclick="event.stopPropagation(); updateQuantity('${item.productId}', ${item.quantity + 1}, ${item.size})">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger ms-3" 
+                                onclick="event.stopPropagation(); removeFromCart('${item.productId}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="d-flex align-items-center">
-                <button class="btn btn-sm btn-outline-secondary me-2" 
-                        onclick="updateQuantity('${item.productId}', ${item.quantity - 1})"
-                        ${item.quantity <= 1 ? 'disabled' : ''}>
-                    <i class="bi bi-dash"></i>
-                </button>
-                <span class="mx-2">${item.quantity}</span>
-                <button class="btn btn-sm btn-outline-secondary ms-2" 
-                        onclick="updateQuantity('${item.productId}', ${item.quantity + 1})">
-                    <i class="bi bi-plus"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger ms-3" 
-                        onclick="removeFromCart('${item.productId}')">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
+        `).join('');
+    }
+
+    // Toplam fiyat ve ürün sayısını güncelle
+    if (cartTotal) cartTotal.textContent = `${totalPrice.toFixed(2)} TL`;
+    if (cartCount) cartCount.textContent = totalItems.toString();
 }
 
 async function addToCart() {
@@ -277,73 +297,84 @@ async function addItemToCart(productId, size, quantity) {
     }
 }
 
-async function updateQuantity(productId, quantity) {
-    if (quantity < 1) return;
-
+async function updateQuantity(productId, newQuantity, size) {
     try {
-        const token = localStorage.getItem('token');
+        // Eğer miktar 0 veya daha az ise ürünü sepetten kaldır
+        if (newQuantity <= 0) {
+            await removeFromCart(productId);
+            return;
+        }
+
         const response = await fetch(`/api/cart/items/${productId}`, {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
-            body: JSON.stringify({ quantity: quantity })
+            body: JSON.stringify({
+                size: parseInt(size),
+                quantity: parseInt(newQuantity)
+            })
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Hata mesajını al
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Miktar güncellenemedi');
         }
 
         await loadCart();
+        showToast('Miktar güncellendi', 'success');
     } catch (error) {
         console.error('Error updating quantity:', error);
-        showToast('Miktar güncellenirken bir hata oluştu', 'error');
+        showToast(error.message || 'Miktar güncellenirken bir hata oluştu', 'error');
     }
 }
 
 async function removeFromCart(productId) {
     try {
-        const token = localStorage.getItem('token');
         const response = await fetch(`/api/cart/items/${productId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error('Ürün sepetten silinemedi');
         }
 
         await loadCart();
-        showToast('Ürün sepetten kaldırıldı');
+        showToast('Ürün sepetten silindi', 'success');
     } catch (error) {
-        console.error('Error removing from cart:', error);
-        showToast('Ürün sepetten kaldırılırken bir hata oluştu', 'error');
+        console.error('Error removing item from cart:', error);
+        showToast('Ürün sepetten silinirken bir hata oluştu', 'error');
     }
 }
 
 async function clearCart() {
-    if (!confirm('Sepeti temizlemek istediğinize emin misiniz?')) {
-        return;
-    }
-
     try {
-        const token = localStorage.getItem('token');
         const response = await fetch('/api/cart', {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error('Sepet temizlenemedi');
         }
 
+        // Sepeti yeniden yükle
         await loadCart();
-        showToast('Sepet temizlendi');
+        
+        // Toast mesajı göster
+        showToast('Sepet başarıyla temizlendi', 'success');
+
+        // Modal'ı kapat
+        if (cartModal) {
+            cartModal.hide();
+        }
     } catch (error) {
         console.error('Error clearing cart:', error);
         showToast('Sepet temizlenirken bir hata oluştu', 'error');
@@ -351,7 +382,25 @@ async function clearCart() {
 }
 
 function showCart() {
-    cartModal.show();
+    try {
+        // Modal'ı kontrol et ve gerekirse yeniden başlat
+        if (!cartModal) {
+            const modalElement = document.getElementById('cartModal');
+            if (modalElement) {
+                cartModal = new bootstrap.Modal(modalElement);
+            } else {
+                throw new Error('Sepet modalı bulunamadı');
+            }
+        }
+        
+        // Sepeti yükle ve modalı göster
+        loadCart().then(() => {
+            cartModal.show();
+        });
+    } catch (error) {
+        console.error('Error showing cart:', error);
+        showToast('Sepet açılırken bir hata oluştu', 'error');
+    }
 }
 
 // Toast container'ı sayfa yüklendiğinde oluştur
