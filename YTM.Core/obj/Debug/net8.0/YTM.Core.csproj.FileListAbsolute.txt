@@ -1,0 +1,12 @@
+C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\YTM.Core.csproj.AssemblyReference.cache
+C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\YTM.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\YTM.Core.AssemblyInfoInputs.cache
+C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\YTM.Core.AssemblyInfo.cs
+C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\YTM.Core.csproj.CoreCompileInputs.cache
+C:\Users\owner\Desktop\YTM\YTM.Core\bin\Debug\net8.0\YTM.Core.deps.json
+C:\Users\owner\Desktop\YTM\YTM.Core\bin\Debug\net8.0\YTM.Core.dll
+C:\Users\owner\Desktop\YTM\YTM.Core\bin\Debug\net8.0\YTM.Core.pdb
+C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\YTM.Core.dll
+C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\refint\YTM.Core.dll
+C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\YTM.Core.pdb
+C:\Users\owner\Desktop\YTM\YTM.Core\obj\Debug\net8.0\ref\YTM.Core.dll

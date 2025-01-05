@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müşteri Paneli - YTM Spor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/customer.css">
+</head>
+<body>
+    <div class="customer-container">
+        <nav class="customer-nav">
+            <div class="customer-nav-header">
+                <h2>YTM Spor</h2>
+            </div>
+            <ul>
+                <li>
+                    <a href="#" class="active" onclick="showSection('orders')">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span>Siparişlerim</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('profile')">
+                        <i class="fas fa-user"></i>
+                        <span>Profilim</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('favorites')">
+                        <i class="fas fa-heart"></i>
+                        <span>Favorilerim</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('addresses')">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Adreslerim</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Çıkış Yap</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="customer-content">
+            <section id="orders" class="content-section">
+                <div class="section-header">
+                    <h2>Siparişlerim</h2>
+                    <div class="section-actions">
+                        <select class="filter-select">
+                            <option value="all">Tüm Siparişler</option>
+                            <option value="pending">Bekleyen</option>
+                            <option value="completed">Tamamlanan</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="order-list">
+                    <!-- Örnek Sipariş Kartları -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-id">#12345</span>
+                            <span class="order-date">15.03.2024</span>
+                        </div>
+                        <div class="order-details">
+                            <div class="order-item">
+                                <span>Nike Air Max</span>
+                                <span>1.999,99 ₺</span>
+                            </div>
+                            <div class="order-item">
+                                <span>Adidas Superstar</span>
+                                <span>1.599,99 ₺</span>
+                            </div>
+                        </div>
+                        <div class="order-total">
+                            <span>Toplam</span>
+                            <span>3.599,98 ₺</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="profile" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Profil Bilgilerim</h2>
+                </div>
+                <div class="profile-content">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="email">E-posta</label>
+                            <input type="email" id="email" value="ornek@email.com" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="currentPassword">Mevcut Şifre</label>
+                            <input type="password" id="currentPassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">Yeni Şifre</label>
+                            <input type="password" id="newPassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Yeni Şifre Tekrar</label>
+                            <input type="password" id="confirmPassword">
+                        </div>
+                        <button type="submit" class="save-btn">
+                            <i class="fas fa-save"></i> Değişiklikleri Kaydet
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+
+            document.querySelectorAll('.customer-nav a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        }
+
+        // Profil formunu dinle
+        document.getElementById('profileForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            // Şifre değiştirme işlemi burada yapılacak
+        });
+    </script>
+</body>
+</html> 

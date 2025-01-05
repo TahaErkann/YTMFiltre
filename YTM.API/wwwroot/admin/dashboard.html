@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli - YTM Spor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="../js/admin.js" defer></script>
+</head>
+<body>
+    <div class="admin-container">
+        <nav class="admin-nav">
+            <div class="admin-nav-header">
+                <h2>YTM Spor</h2>
+                <p>Admin Paneli</p>
+            </div>
+            <ul>
+                <li>
+                    <a href="#" onclick="showSection('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('products')">
+                        <i class="fas fa-box"></i>
+                        <span>Ürünler</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('orders')">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Siparişler</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('users')">
+                        <i class="fas fa-users"></i>
+                        <span>Kullanıcılar</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Çıkış Yap</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="admin-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section">
+                <div class="section-header">
+                    <h2>Dashboard</h2>
+                </div>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-shopping-cart"></i>
+                        <div class="stat-info">
+                            <h3>Toplam Sipariş</h3>
+                            <p id="totalOrders">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-info">
+                            <h3>Toplam Kullanıcı</h3>
+                            <p id="totalUsers">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-box"></i>
+                        <div class="stat-info">
+                            <h3>Toplam Ürün</h3>
+                            <p id="totalProducts">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <div class="stat-info">
+                            <h3>Toplam Gelir</h3>
+                            <p id="totalRevenue">₺0</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section id="products" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Ürün Yönetimi</h2>
+                    <button class="add-button" onclick="showAddProductModal()">
+                        <i class="fas fa-plus"></i> Yeni Ürün Ekle
+                    </button>
+                </div>
+
+                <div class="products-grid">
+                    <!-- Ürünler buraya dinamik olarak yüklenecek -->
+                </div>
+
+                <!-- Ürün Ekleme/Düzenleme Modal -->
+                <div id="productModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-button" onclick="closeProductModal()">&times;</span>
+                        <h2 id="modalTitle">Yeni Ürün Ekle</h2>
+                        <form id="productForm" onsubmit="handleProductSubmit(event)">
+                            <input type="hidden" id="productId">
+                            <div class="form-group">
+                                <label for="name">Ürün Adı</label>
+                                <input type="text" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Açıklama</label>
+                                <textarea id="description" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="price">Fiyat (₺)</label>
+                                <input type="number" id="price" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="brand">Marka</label>
+                                <input type="text" id="brand" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="imageUrl">Resim URL</label>
+                                <input type="url" id="imageUrl" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="stock">Stok</label>
+                                <input type="number" id="stock" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="isActive">Aktif</label>
+                                <input type="checkbox" id="isActive" checked>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="save-button">
+                                    <i class="fas fa-save"></i> Kaydet
+                                </button>
+                                <button type="button" class="cancel-button" onclick="closeProductModal()">
+                                    <i class="fas fa-times"></i> İptal
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="orders" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Siparişler</h2>
+                </div>
+                <!-- Sipariş içeriği buraya gelecek -->
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>Kullanıcılar</h2>
+                </div>
+                <!-- Kullanıcı içeriği buraya gelecek -->
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Sayfa yüklendiğinde token kontrolü
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            const userRole = localStorage.getItem('userRole'); // Role bilgisini doğrudan al
+
+            if (!token || !userRole) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            if (userRole !== 'Admin') {
+                alert('Bu sayfaya erişim yetkiniz yok!');
+                window.location.href = '/customer/dashboard.html';
+                return;
+            }
+
+            // Admin erişimi onaylandı, içeriği göster
+            document.querySelector('.admin-container').style.display = 'flex';
+            
+            // Varsayılan olarak dashboard'u göster
+            showSection('dashboard');
+            
+            // Ürünleri yükle
+            if (document.querySelector('.products-grid')) {
+                loadProducts();
+            }
+        });
+
+        function showSection(sectionId) {
+            // Tüm bölümleri gizle
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Seçilen bölümü göster
+            document.getElementById(sectionId).style.display = 'block';
+
+            // Aktif menü öğesini güncelle
+            document.querySelectorAll('.admin-nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick').includes(sectionId)) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Eğer ürünler bölümü seçildiyse ürünleri yükle
+            if (sectionId === 'products') {
+                loadProducts();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html> 

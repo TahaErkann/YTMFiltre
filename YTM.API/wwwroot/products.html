@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayakkabı Mağazası - Ürünler</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <h1>YTM Ayakkabı</h1>
+                <div class="nav-links">
+                    <a href="/">Ana Sayfa</a>
+                    <a href="/products.html" class="active">Ürünler</a>
+                    <a href="/cart.html">Sepetim</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <aside class="filters">
+            <div class="filter-container">
+                <h3>Filtrele</h3>
+                
+                <div class="filter-section">
+                    <h4>Fiyat Aralığı</h4>
+                    <div class="price-inputs">
+                        <input type="number" id="minPrice" placeholder="Min Fiyat" min="0">
+                        <input type="number" id="maxPrice" placeholder="Max Fiyat" min="0">
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h4>Marka</h4>
+                    <select id="brandFilter">
+                        <option value="">Tümü</option>
+                        <option value="Nike">Nike</option>
+                        <option value="Adidas">Adidas</option>
+                        <option value="Puma">Puma</option>
+                    </select>
+                </div>
+
+                <div class="filter-section">
+                    <h4>Kategori</h4>
+                    <select id="categoryFilter">
+                        <option value="">Tümü</option>
+                        <option value="Erkek">Erkek</option>
+                        <option value="Kadın">Kadın</option>
+                        <option value="Unisex">Unisex</option>
+                        <option value="Çocuk">Çocuk</option>
+                    </select>
+                </div>
+
+                <div class="filter-section">
+                    <h4>Numara</h4>
+                    <select id="sizeFilter">
+                        <option value="">Tümü</option>
+                    </select>
+                </div>
+
+                <div class="filter-section">
+                    <label class="stock-checkbox">
+                        <input type="checkbox" id="inStockFilter">
+                        Sadece Stokta Olanlar
+                    </label>
+                </div>
+
+                <div class="filter-buttons">
+                    <button id="applyFilters" class="btn primary">Filtrele</button>
+                    <button id="resetFilters" class="btn secondary">Sıfırla</button>
+                </div>
+            </div>
+        </aside>
+
+        <section class="products-grid" id="productsContainer">
+            <!-- Ürünler buraya dinamik olarak eklenecek -->
+        </section>
+    </main>
+
+    <script src="/js/products.js"></script>
+</body>
+</html> 

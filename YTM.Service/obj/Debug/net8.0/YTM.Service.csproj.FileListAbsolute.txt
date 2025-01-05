@@ -1,0 +1,15 @@
+C:\Users\owner\Desktop\YTM\YTM.Service\bin\Debug\net8.0\YTM.Service.deps.json
+C:\Users\owner\Desktop\YTM\YTM.Service\bin\Debug\net8.0\YTM.Service.dll
+C:\Users\owner\Desktop\YTM\YTM.Service\bin\Debug\net8.0\YTM.Service.pdb
+C:\Users\owner\Desktop\YTM\YTM.Service\bin\Debug\net8.0\YTM.Core.dll
+C:\Users\owner\Desktop\YTM\YTM.Service\bin\Debug\net8.0\YTM.Core.pdb
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Service.csproj.AssemblyReference.cache
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Service.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Service.AssemblyInfoInputs.cache
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Service.AssemblyInfo.cs
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Service.csproj.CoreCompileInputs.cache
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Serv.B5A6931B.Up2Date
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Service.dll
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\refint\YTM.Service.dll
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\YTM.Service.pdb
+C:\Users\owner\Desktop\YTM\YTM.Service\obj\Debug\net8.0\ref\YTM.Service.dll
