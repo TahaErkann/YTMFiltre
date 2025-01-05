@@ -189,7 +189,7 @@ namespace YTM.API.Controllers
         public string ProductId { get; set; } = null!;
 
         [Required(ErrorMessage = "Size zorunludur")]
-        [Range(35, 45, ErrorMessage = "Size 35-45 arasında olmalıdır")]
+        [Range(30, 50, ErrorMessage = "Size 30-50 arasında olmalıdır")]
         public int Size { get; set; }
 
         [Required(ErrorMessage = "Quantity zorunludur")]

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("YTM.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+58f05e5d11dc3b5d73bfe381d7ba199cc9738712")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+88cedf07139165f4a45caf29f5ddefe3a66fc387")]
 [assembly: System.Reflection.AssemblyProductAttribute("YTM.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YTM.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
